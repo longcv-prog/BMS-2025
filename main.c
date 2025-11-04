@@ -130,7 +130,7 @@ uint8_t	UTINT_Fault   = 0;
 uint8_t	UTD_Fault 	  = 0;
 uint8_t	UTC_Fault 	  = 0;
  
-uint8_t ProtectionsTriggered = 0; 	// Set to 1 if any protection triggers
+uint8_t ProtectionsTriggered = 0; 		// Set to 1 if any protection triggers
 
 uint8_t LD_ON 			  = 0;						// Load Detect status bit
 uint8_t DSG 			 	  = 0;   					// discharge FET state
@@ -151,12 +151,12 @@ uint8_t HOST_FET_EN 	= 0;
 uint8_t SLEEPCHG 			= 0;
 uint8_t SFET 					= 0;
 
-uint32_t CC1; 											// in BQ769x2_READPASSQ func
-uint32_t CC2;												// in BQ769x2_READPASSQ func
-uint32_t CC3;												// in BQ769x2_READPASSQ func
-uint32_t AccumulatedCharge_Int; 		// in BQ769x2_READPASSQ func
-uint32_t AccumulatedCharge_Frac;		// in BQ769x2_READPASSQ func
-uint32_t AccumulatedCharge_Time;		// in BQ769x2_READPASSQ func
+uint32_t CC1; 												// in BQ769x2_READPASSQ func
+uint32_t CC2;													// in BQ769x2_READPASSQ func
+uint32_t CC3;													// in BQ769x2_READPASSQ func
+uint32_t AccumulatedCharge_Int; 			// in BQ769x2_READPASSQ func
+uint32_t AccumulatedCharge_Frac;			// in BQ769x2_READPASSQ func
+uint32_t AccumulatedCharge_Time;			// in BQ769x2_READPASSQ func
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -166,6 +166,7 @@ static void MX_I2C2_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
+
 void delayUS(uint32_t us) {   										// Sets the delay in microseconds.
 	__HAL_TIM_SET_COUNTER(&htim1,0);  							// set the counter value a 0
 	while (__HAL_TIM_GET_COUNTER(&htim1) < us);  		// wait for the counter to reach the us input in the parameter
@@ -284,7 +285,7 @@ int I2C_ReadReg(uint8_t reg_addr, uint8_t *reg_data, uint8_t count)
 				RX_CRC_Fail += 1;
 			j = j + 1;
 		}
-		CopyArray(RX_Buffer, reg_data, count);
+		CopyArray(RX_Buffer, reg_data, crc_count);
 	}
 #else
 	HAL_I2C_Mem_Read(&hi2c2, DEV_ADDR, reg_addr, 1, reg_data, count, 1000);
@@ -422,109 +423,109 @@ void BQ769x2_Init() {
 	CommandSubcommands(SET_CFGUPDATE);
 
 	// Calibration
-	BQ769x2_SetRegister(Cell1Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell2Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell3Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell4Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell5Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell6Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell7Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell8Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell9Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell10Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell11Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell12Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell13Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell14Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell15Gain, 0x2F58, 2);
-	BQ769x2_SetRegister(Cell16Gain, 0x2F58, 2);
+	BQ769x2_SetRegister(Cell1Gain, 12120, 2);
+	BQ769x2_SetRegister(Cell2Gain, 12120, 2);
+	BQ769x2_SetRegister(Cell3Gain, 12120, 2);
+	BQ769x2_SetRegister(Cell4Gain, 12120, 2);
+	BQ769x2_SetRegister(Cell5Gain, 12119, 2);
+	BQ769x2_SetRegister(Cell6Gain, 12119, 2);
+	BQ769x2_SetRegister(Cell7Gain, 12119, 2);
+	BQ769x2_SetRegister(Cell8Gain, 12119, 2);
+	BQ769x2_SetRegister(Cell9Gain, 12122, 2);
+	BQ769x2_SetRegister(Cell10Gain, 12122, 2);
+	BQ769x2_SetRegister(Cell11Gain, 12122, 2);
+	BQ769x2_SetRegister(Cell12Gain, 12122, 2);
+	BQ769x2_SetRegister(Cell13Gain, 12121, 2);
+	BQ769x2_SetRegister(Cell14Gain, 12121, 2);
+	BQ769x2_SetRegister(Cell15Gain, 12121, 2);
+	BQ769x2_SetRegister(Cell16Gain, 12121, 2);
 	
-	BQ769x2_SetRegister(PackGain, 0x8513, 2);
-	BQ769x2_SetRegister(TOSGain, 0x0000, 2);
-	BQ769x2_SetRegister(LDGain, 0x85DC, 2);
-	BQ769x2_SetRegister(ADCGain, 0x0FC7, 2);
-	BQ769x2_SetRegister(CCGain, 0x40F23055, 4);      			
-	BQ769x2_SetRegister(CapacityGain, 0x40F23055, 4);			
-	BQ769x2_SetRegister(VcellOffset, 0x00, 1);        		
-	BQ769x2_SetRegister(VdivOffset, 0x00, 1);     				
-	BQ769x2_SetRegister(CoulombCounterOffsetSamples, 0x40, 1);
-	BQ769x2_SetRegister(BoardOffset, 0x00, 1);	
+	BQ769x2_SetRegister(PackGain, 34067, 2);
+	BQ769x2_SetRegister(TOSGain, 33961, 2);
+	BQ769x2_SetRegister(LDGain, 34268, 2);
+	BQ769x2_SetRegister(ADCGain, 4039, 2);
+	BQ769x2_SetRegister(CCGain, 1.000, 4);      			
+	BQ769x2_SetRegister(CapacityGain, 1.000, 4);			
+	BQ769x2_SetRegister(VcellOffset, 0, 2);        		
+	BQ769x2_SetRegister(VdivOffset, 0, 2);     				
+	BQ769x2_SetRegister(CoulombCounterOffsetSamples, 64, 2);
+	BQ769x2_SetRegister(BoardOffset, 0, 2);	
 	
-	BQ769x2_SetRegister(InternalTempOffset, 0x00, 1);
-	BQ769x2_SetRegister(CFETOFFTempOffset, 0x00, 1);
-	BQ769x2_SetRegister(DFETOFFTempOffset, 0x00, 1);
-	BQ769x2_SetRegister(ALERTTempOffset, 0x00, 1);
-	BQ769x2_SetRegister(TS1TempOffset, 0x00, 1);
-	BQ769x2_SetRegister(TS2TempOffset, 0x00, 1);
-	BQ769x2_SetRegister(TS3TempOffset, 0x00, 1);
-	BQ769x2_SetRegister(HDQTempOffset, 0x00, 1);
-	BQ769x2_SetRegister(DCHGTempOffset, 0x00, 1);
-	BQ769x2_SetRegister(DDSGTempOffset, 0x00, 1);
-	BQ769x2_SetRegister(IntGain, 0x632E, 2);
-	BQ769x2_SetRegister(Intbaseoffset, 0x0BD8, 2);
-	BQ769x2_SetRegister(IntMaximumAD, 0x3FFF, 2);
-	BQ769x2_SetRegister(IntMaximumTemp, 0x18EB, 2);
+	BQ769x2_SetRegister(InternalTempOffset, 0.0, 1);
+	BQ769x2_SetRegister(CFETOFFTempOffset, 0.0, 1);
+	BQ769x2_SetRegister(DFETOFFTempOffset, 0.0, 1);
+	BQ769x2_SetRegister(ALERTTempOffset, 0.0, 1);
+	BQ769x2_SetRegister(TS1TempOffset, 0.0, 1);
+	BQ769x2_SetRegister(TS2TempOffset, 0.0, 1);
+	BQ769x2_SetRegister(TS3TempOffset, 0.0, 1);
+	BQ769x2_SetRegister(HDQTempOffset, 0.0, 1);
+	BQ769x2_SetRegister(DCHGTempOffset, 0.0, 1);
+	BQ769x2_SetRegister(DDSGTempOffset, 0.0, 1);
+	BQ769x2_SetRegister(IntGain, 25390, 2);
+	BQ769x2_SetRegister(Intbaseoffset, 3032, 2);
+	BQ769x2_SetRegister(IntMaximumAD, 16383, 2);
+	BQ769x2_SetRegister(IntMaximumTemp, 6379, 2);
 	
-	BQ769x2_SetRegister(T18kCoeffa1, 0xC35C, 2);
-	BQ769x2_SetRegister(T18kCoeffa2, 0x6737, 2);
-	BQ769x2_SetRegister(T18kCoeffa3, 0xA778, 2);
-	BQ769x2_SetRegister(T18kCoeffa4, 0x70A2, 2);
-	BQ769x2_SetRegister(T18kCoeffa5, 0x02A0, 2);
-	BQ769x2_SetRegister(T18kCoeffb1, 0xFE8D, 2);
-	BQ769x2_SetRegister(T18kCoeffb2, 0x02C4, 2);
-	BQ769x2_SetRegister(T18kCoeffb3, 0xF256, 2);
-	BQ769x2_SetRegister(T18kCoeffb4, 0x13BB, 2);
-	BQ769x2_SetRegister(T18kAdc0, 0x2DB7, 2);
+	BQ769x2_SetRegister(T18kCoeffa1, (uint16_t)-15524, 2);
+	BQ769x2_SetRegister(T18kCoeffa2, 26423, 2);
+	BQ769x2_SetRegister(T18kCoeffa3, (uint16_t)-22664, 2);
+	BQ769x2_SetRegister(T18kCoeffa4, 28834, 2);
+	BQ769x2_SetRegister(T18kCoeffa5, 672, 2);
+	BQ769x2_SetRegister(T18kCoeffb1, (uint16_t)-371, 2);
+	BQ769x2_SetRegister(T18kCoeffb2, 708, 2);
+	BQ769x2_SetRegister(T18kCoeffb3, (uint16_t)-3498, 2);
+	BQ769x2_SetRegister(T18kCoeffb4, 5051, 2);
+	BQ769x2_SetRegister(T18kAdc0, 11703, 2);
 	
-	BQ769x2_SetRegister(T180kCoeffa1, 0xBB97, 2);
-	BQ769x2_SetRegister(T180kCoeffa2, 0x649F, 2);
-	BQ769x2_SetRegister(T180kCoeffa3, 0xA3D7, 2);
-	BQ769x2_SetRegister(T180kCoeffa4, 0x7DAF, 2);
-	BQ769x2_SetRegister(T180kCoeffa5, 0x082A, 2);
-	BQ769x2_SetRegister(T180kCoeffb1, 0xF7F9, 2);
-	BQ769x2_SetRegister(T180kCoeffb2, 0x0B8B, 2);
-	BQ769x2_SetRegister(T180kCoeffb3, 0xF29D, 2);
-	BQ769x2_SetRegister(T180kCoeffb4, 0x1121, 2);
-	BQ769x2_SetRegister(T180kAdc0, 0x435E, 2);
+	BQ769x2_SetRegister(T180kCoeffa1, (uint16_t)-17513, 2);
+	BQ769x2_SetRegister(T180kCoeffa2, 25759, 2);
+	BQ769x2_SetRegister(T180kCoeffa3, (uint16_t)-23593, 2);
+	BQ769x2_SetRegister(T180kCoeffa4, 32175, 2);
+	BQ769x2_SetRegister(T180kCoeffa5, 2090, 2);
+	BQ769x2_SetRegister(T180kCoeffb1, (uint16_t)-2055, 2);
+	BQ769x2_SetRegister(T180kCoeffb2, 2955, 2);
+	BQ769x2_SetRegister(T180kCoeffb3, (uint16_t)-3427, 2);
+	BQ769x2_SetRegister(T180kCoeffb4, 4385, 2);
+	BQ769x2_SetRegister(T180kAdc0, 17246, 2);
 
-	BQ769x2_SetRegister(CustomCoeffa1, 0x00, 1);
-	BQ769x2_SetRegister(CustomCoeffa2, 0x00, 1);
-	BQ769x2_SetRegister(CustomCoeffa3, 0x00, 1);
-	BQ769x2_SetRegister(CustomCoeffa4, 0x00, 1);
-	BQ769x2_SetRegister(CustomCoeffa5, 0x00, 1);
-	BQ769x2_SetRegister(CustomCoeffb1, 0x00, 1);
-	BQ769x2_SetRegister(CustomCoeffb2, 0x00, 1);
-	BQ769x2_SetRegister(CustomCoeffb3, 0x00, 1);
-	BQ769x2_SetRegister(CustomCoeffb4, 0x00, 1);
-	BQ769x2_SetRegister(CustomRc0, 0x00, 1);
-	BQ769x2_SetRegister(CustomAdc0, 0x00, 1);
+	BQ769x2_SetRegister(CustomCoeffa1, 0x00, 2);
+	BQ769x2_SetRegister(CustomCoeffa2, 0x00, 2);
+	BQ769x2_SetRegister(CustomCoeffa3, 0x00, 2);
+	BQ769x2_SetRegister(CustomCoeffa4, 0x00, 2);
+	BQ769x2_SetRegister(CustomCoeffa5, 0x00, 2);
+	BQ769x2_SetRegister(CustomCoeffb1, 0x00, 2);
+	BQ769x2_SetRegister(CustomCoeffb2, 0x00, 2);
+	BQ769x2_SetRegister(CustomCoeffb3, 0x00, 2);
+	BQ769x2_SetRegister(CustomCoeffb4, 0x00, 2);
+	BQ769x2_SetRegister(CustomRc0, 0x00, 2);
+	BQ769x2_SetRegister(CustomAdc0, 0x00, 2);
 	
-	BQ769x2_SetRegister(CoulombCounterDeadband, 0x09, 1);
+	BQ769x2_SetRegister(CoulombCounterDeadband, 9, 1);
 	BQ769x2_SetRegister(CUVThresholdOverride, 0xFFFF, 2);
 	BQ769x2_SetRegister(COVThresholdOverride, 0xFFFF, 2);
-	BQ769x2_SetRegister(MinBlowFuseVoltage, 0x1388, 2);
-	BQ769x2_SetRegister(FuseBlowTimeout, 0x1E, 1);
+	BQ769x2_SetRegister(MinBlowFuseVoltage, 500, 2);
+	BQ769x2_SetRegister(FuseBlowTimeout, 30, 1);
 	
-	BQ769x2_SetRegister(PowerConfig, 0x2D82, 2);
+	BQ769x2_SetRegister(PowerConfig, 0x2C82, 2);
 	BQ769x2_SetRegister(REG12Config, 0x0D, 1);
 	BQ769x2_SetRegister(REG0Config, 0x01, 1);
 	BQ769x2_SetRegister(HWDRegulatorOptions, 0x00, 1);
-	BQ769x2_SetRegister(CommType, 0x00, 1);
-	BQ769x2_SetRegister(I2CAddress, 0x00, 1);
+	BQ769x2_SetRegister(CommType, 0, 1);
+	BQ769x2_SetRegister(I2CAddress, 0, 1);
 	BQ769x2_SetRegister(SPIConfiguration, 0x20, 1);
-	BQ769x2_SetRegister(CommIdleTime, 0x00, 1);
-	BQ769x2_SetRegister(DFETOFFPinConfig, 0x42, 1);
-	BQ769x2_SetRegister(CFETOFFPinConfig, 0x0B, 1);
-	BQ769x2_SetRegister(ALERTPinConfig, 0x2A, 1);
+	BQ769x2_SetRegister(CommIdleTime, 0, 1);
+	BQ769x2_SetRegister(CFETOFFPinConfig, 0xAF, 1);
+	BQ769x2_SetRegister(DFETOFFPinConfig, 0xEE, 1);
+	BQ769x2_SetRegister(ALERTPinConfig, 0x3A, 1);
 	BQ769x2_SetRegister(TS1Config, 0x07, 1);
 	BQ769x2_SetRegister(TS2Config, 0x0F, 1);
 	BQ769x2_SetRegister(TS3Config, 0x0F, 1);	
-	BQ769x2_SetRegister(HDQPinConfig, 0x0B, 1);  
+	BQ769x2_SetRegister(HDQPinConfig, 0x2B, 1);  
 	BQ769x2_SetRegister(DCHGPinConfig, 0x2A, 1); 
 	BQ769x2_SetRegister(DDSGPinConfig, 0x2A, 1); 
 	BQ769x2_SetRegister(DAConfiguration, 0x05, 1); 	
 	BQ769x2_SetRegister(VCellMode, 0x0000, 2);
-	BQ769x2_SetRegister(CC3Samples, 0x50, 1);
+	BQ769x2_SetRegister(CC3Samples, 80, 1);
 	BQ769x2_SetRegister(ProtectionConfiguration, 0x0000, 2); //0x0002
 	BQ769x2_SetRegister(EnabledProtectionsA, 0x00, 1);			 //0xFC
 	BQ769x2_SetRegister(EnabledProtectionsB, 0x00, 1);
@@ -535,7 +536,7 @@ void BQ769x2_Init() {
 	BQ769x2_SetRegister(DSGFETProtectionsA, 0xE4, 1);	
 	BQ769x2_SetRegister(DSGFETProtectionsB, 0xE6, 1);
 	BQ769x2_SetRegister(DSGFETProtectionsC, 0xE2, 1);
-	BQ769x2_SetRegister(BodyDiodeThreshold, 0x32, 1);
+	BQ769x2_SetRegister(BodyDiodeThreshold, 50, 2);
 
 	BQ769x2_SetRegister(DefaultAlarmMask, 0xF882, 2);
 	BQ769x2_SetRegister(SFAlertMaskA, 0xFC, 1);
@@ -552,174 +553,174 @@ void BQ769x2_Init() {
 
 	BQ769x2_SetRegister(FETOptions, 0x0F, 1);
 	BQ769x2_SetRegister(ChgPumpControl, 0x01, 1);
-	BQ769x2_SetRegister(PrechargeStartVoltage, 0x00, 1);
-	BQ769x2_SetRegister(PrechargeStopVoltage, 0x00, 1);
-	BQ769x2_SetRegister(PredischargeTimeout, 0x05, 1);	
-	BQ769x2_SetRegister(PredischargeStopDelta, 0x32, 1);
-	BQ769x2_SetRegister(DsgCurrentThreshold, 0x64, 1);
-	BQ769x2_SetRegister(ChgCurrentThreshold, 0x32, 1);
-	BQ769x2_SetRegister(CheckTime, 0x05, 1);
+	BQ769x2_SetRegister(PrechargeStartVoltage, 0, 2);
+	BQ769x2_SetRegister(PrechargeStopVoltage, 0, 2);
+	BQ769x2_SetRegister(PredischargeTimeout, 5, 1);	
+	BQ769x2_SetRegister(PredischargeStopDelta, 50, 1);
+	BQ769x2_SetRegister(DsgCurrentThreshold, 100, 2);
+	BQ769x2_SetRegister(ChgCurrentThreshold, 50, 2);
+	BQ769x2_SetRegister(CheckTime, 5, 1);
 
-	BQ769x2_SetRegister(Cell1Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell2Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell3Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell4Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell5Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell6Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell7Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell8Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell9Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell10Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell11Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell12Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell13Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell14Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell15Interconnect, 0x00, 1);
-	BQ769x2_SetRegister(Cell16Interconnect, 0x00, 1);
+	BQ769x2_SetRegister(Cell1Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell2Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell3Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell4Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell5Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell6Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell7Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell8Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell9Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell10Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell11Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell12Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell13Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell14Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell15Interconnect, 0, 2);
+	BQ769x2_SetRegister(Cell16Interconnect, 0, 2);
 	
 	BQ769x2_SetRegister(MfgStatusInit, 0x0050, 2);
 	BQ769x2_SetRegister(BalancingConfiguration, 0x03, 1);
-	BQ769x2_SetRegister(MinCellTemp, 0xFFEC, 2);   		// -20°C
-	BQ769x2_SetRegister(MaxCellTemp, 0x003C, 2);   		// 60°C
-	BQ769x2_SetRegister(MaxInternalTemp, 0x0046, 2); 	// 70°C
-	BQ769x2_SetRegister(CellBalanceInterval, 0x14, 1);
-	BQ769x2_SetRegister(CellBalanceMaxCells, 0x01, 1);
-	BQ769x2_SetRegister(CellBalanceMinCellVCharge, 0x0F3C, 2);
-	BQ769x2_SetRegister(CellBalanceMinDeltaCharge, 0x28, 1);
-	BQ769x2_SetRegister(CellBalanceStopDeltaCharge, 0x14, 1);
-	BQ769x2_SetRegister(CellBalanceMinCellVRelax, 0x0F3C, 2);
-	BQ769x2_SetRegister(CellBalanceMinDeltaRelax, 0x28, 1);
-	BQ769x2_SetRegister(CellBalanceStopDeltaRelax, 0x14, 1);
+	BQ769x2_SetRegister(MinCellTemp, (uint8_t)-20, 1);   		// -20°C
+	BQ769x2_SetRegister(MaxCellTemp, 60, 1);   		// 60°C
+	BQ769x2_SetRegister(MaxInternalTemp, 70, 1); 	// 70°C
+	BQ769x2_SetRegister(CellBalanceInterval, 20, 1);
+	BQ769x2_SetRegister(CellBalanceMaxCells, 1, 1);
+	BQ769x2_SetRegister(CellBalanceMinCellVCharge, 3900, 2);
+	BQ769x2_SetRegister(CellBalanceMinDeltaCharge, 40, 1);
+	BQ769x2_SetRegister(CellBalanceStopDeltaCharge, 20, 1);
+	BQ769x2_SetRegister(CellBalanceMinCellVRelax, 3900, 2);
+	BQ769x2_SetRegister(CellBalanceMinDeltaRelax, 40, 1);
+	BQ769x2_SetRegister(CellBalanceStopDeltaRelax, 20, 1);
 
-	BQ769x2_SetRegister(ShutdownCellVoltage, 0x00, 1);
-	BQ769x2_SetRegister(ShutdownStackVoltage, 0x0258, 2);
-	BQ769x2_SetRegister(LowVShutdownDelay, 0x01, 1);
-	BQ769x2_SetRegister(ShutdownTemperature, 0x55, 1);
-	BQ769x2_SetRegister(ShutdownTemperatureDelay, 0x05, 1);
-	BQ769x2_SetRegister(FETOffDelay, 0x00, 1);
-	BQ769x2_SetRegister(ShutdownCommandDelay, 0x00, 1);
-	BQ769x2_SetRegister(AutoShutdownTime, 0x00, 1);
-	BQ769x2_SetRegister(RAMFailShutdownTime, 0x05, 1);
-	BQ769x2_SetRegister(SleepCurrent, 0x14, 1);
-	BQ769x2_SetRegister(VoltageTime, 0x05, 1);
-	BQ769x2_SetRegister(WakeComparatorCurrent, 0x01F4, 2);
-	BQ769x2_SetRegister(SleepHysteresisTime, 0x0A, 1);
-	BQ769x2_SetRegister(SleepChargerVoltageThreshold, 0x07D0, 2);
-	BQ769x2_SetRegister(SleepChargerPACKTOSDelta, 0xC8, 1);
-	BQ769x2_SetRegister(ConfigRAMSignature, 0x0000, 2);
+	BQ769x2_SetRegister(ShutdownCellVoltage, 0, 2);
+	BQ769x2_SetRegister(ShutdownStackVoltage, 600, 2);
+	BQ769x2_SetRegister(LowVShutdownDelay, 1, 1);
+	BQ769x2_SetRegister(ShutdownTemperature, 85, 1);
+	BQ769x2_SetRegister(ShutdownTemperatureDelay, 5, 1);
+	BQ769x2_SetRegister(FETOffDelay, 0, 1);
+	BQ769x2_SetRegister(ShutdownCommandDelay, 0, 1);
+	BQ769x2_SetRegister(AutoShutdownTime, 0, 1);
+	BQ769x2_SetRegister(RAMFailShutdownTime, 5, 1);
+	BQ769x2_SetRegister(SleepCurrent, 20, 2);
+	BQ769x2_SetRegister(VoltageTime, 5, 1);
+	BQ769x2_SetRegister(WakeComparatorCurrent, 500, 2);
+	BQ769x2_SetRegister(SleepHysteresisTime, 10, 1);
+	BQ769x2_SetRegister(SleepChargerVoltageThreshold, 2000, 2);
+	BQ769x2_SetRegister(SleepChargerPACKTOSDelta, 200, 2);
+	BQ769x2_SetRegister(ConfigRAMSignature, 0, 2);
 	
-	BQ769x2_SetRegister(CUVThreshold, 0x32, 1);
- 	BQ769x2_SetRegister(CUVDelay, 0x4A, 1);
- 	BQ769x2_SetRegister(CUVRecoveryHysteresis, 0x02, 1);
+	BQ769x2_SetRegister(CUVThreshold, 50, 1);
+ 	BQ769x2_SetRegister(CUVDelay, 74, 2);
+ 	BQ769x2_SetRegister(CUVRecoveryHysteresis, 2, 1);
 
-	BQ769x2_SetRegister(COVThreshold, 0x56, 1);
-	BQ769x2_SetRegister(COVDelay, 0x4A, 1);
-	BQ769x2_SetRegister(COVRecoveryHysteresis, 0x02, 1);
+	BQ769x2_SetRegister(COVThreshold, 86, 1);
+	BQ769x2_SetRegister(COVDelay, 74, 2);
+	BQ769x2_SetRegister(COVRecoveryHysteresis, 2, 1);
 	
-	BQ769x2_SetRegister(COVLLatchLimit, 0x00, 1);
-	BQ769x2_SetRegister(COVLCounterDecDelay, 0x0A, 1);
-	BQ769x2_SetRegister(COVLRecoveryTime, 0x0F, 1);
+	BQ769x2_SetRegister(COVLLatchLimit, 0, 1);
+	BQ769x2_SetRegister(COVLCounterDecDelay, 10, 1);
+	BQ769x2_SetRegister(COVLRecoveryTime, 15, 1);
 	
-	BQ769x2_SetRegister(OCCThreshold, 0x02, 1);
-	BQ769x2_SetRegister(OCCDelay, 0x04, 1);
-	BQ769x2_SetRegister(OCCRecoveryThreshold, 0xFF38, 2);
-	BQ769x2_SetRegister(OCCPACKTOSDelta, 0xC8, 1);	
+	BQ769x2_SetRegister(OCCThreshold, 2, 1);
+	BQ769x2_SetRegister(OCCDelay, 4, 1);
+	BQ769x2_SetRegister(OCCRecoveryThreshold, (uint16_t)-200, 2);
+	BQ769x2_SetRegister(OCCPACKTOSDelta, 200, 2);	
 	
-	BQ769x2_SetRegister(OCD1Threshold, 0x04, 1);
-	BQ769x2_SetRegister(OCD1Delay, 0x01, 1);
-	BQ769x2_SetRegister(OCD2Threshold, 0x03, 1);
-	BQ769x2_SetRegister(OCD2Delay, 0x07, 1);
+	BQ769x2_SetRegister(OCD1Threshold, 4, 1);
+	BQ769x2_SetRegister(OCD1Delay, 1, 1);
+	BQ769x2_SetRegister(OCD2Threshold, 3, 1);
+	BQ769x2_SetRegister(OCD2Delay, 7, 1);
 	
-	BQ769x2_SetRegister(SCDThreshold, 0x00, 1);  
-	BQ769x2_SetRegister(SCDDelay, 0x02, 1);	
-	BQ769x2_SetRegister(SCDRecoveryTime, 0x05, 1);		
+	BQ769x2_SetRegister(SCDThreshold, 0, 1);  
+	BQ769x2_SetRegister(SCDDelay, 2, 1);	
+	BQ769x2_SetRegister(SCDRecoveryTime, 5, 1);		
 	
-	BQ769x2_SetRegister(OCD3Threshold, 0xF060, 2);
-	BQ769x2_SetRegister(OCD3Delay, 0x02, 1);	
-	BQ769x2_SetRegister(OCDRecoveryThreshold, 0xC8, 1);
-	BQ769x2_SetRegister(OCDLLatchLimit, 0x00, 1);
-	BQ769x2_SetRegister(OCDLCounterDecDelay, 0x0A, 1);
-	BQ769x2_SetRegister(OCDLRecoveryTime, 0x0F, 1);
-	BQ769x2_SetRegister(OCDLRecoveryThreshold, 0xC8, 1);
+	BQ769x2_SetRegister(OCD3Threshold, (uint16_t)-4000, 2);
+	BQ769x2_SetRegister(OCD3Delay, 2, 1);	
+	BQ769x2_SetRegister(OCDRecoveryThreshold, 200, 2);
+	BQ769x2_SetRegister(OCDLLatchLimit, 0, 1);
+	BQ769x2_SetRegister(OCDLCounterDecDelay, 10, 1);
+	BQ769x2_SetRegister(OCDLRecoveryTime, 15, 1);
+	BQ769x2_SetRegister(OCDLRecoveryThreshold, 200, 2);
 	
-	BQ769x2_SetRegister(SCDLLatchLimit, 0x00, 1);
-	BQ769x2_SetRegister(SCDLCounterDecDelay, 0x0A, 1);	
-	BQ769x2_SetRegister(SCDLRecoveryTime, 0x0F, 1);	
-	BQ769x2_SetRegister(SCDLRecoveryThreshold, 0xC8, 1);	
+	BQ769x2_SetRegister(SCDLLatchLimit, 0, 1);
+	BQ769x2_SetRegister(SCDLCounterDecDelay, 10, 1);	
+	BQ769x2_SetRegister(SCDLRecoveryTime, 15, 1);	
+	BQ769x2_SetRegister(SCDLRecoveryThreshold, 200, 2);	
 	
-	BQ769x2_SetRegister(OTCThreshold, 0x37, 1);
-	BQ769x2_SetRegister(OTCDelay, 0x02, 1);
-	BQ769x2_SetRegister(OTCRecovery, 0x32, 1);
+	BQ769x2_SetRegister(OTCThreshold, 55, 1);
+	BQ769x2_SetRegister(OTCDelay, 2, 1);
+	BQ769x2_SetRegister(OTCRecovery, 50, 1);
 
-	BQ769x2_SetRegister(OTDThreshold, 0x3C, 1);
-	BQ769x2_SetRegister(OTDDelay, 0x02, 1);
-	BQ769x2_SetRegister(OTDRecovery, 0x37, 1);
+	BQ769x2_SetRegister(OTDThreshold, 60, 1);
+	BQ769x2_SetRegister(OTDDelay, 2, 1);
+	BQ769x2_SetRegister(OTDRecovery, 55, 1);
 
-	BQ769x2_SetRegister(OTFThreshold, 0x50, 1);
-	BQ769x2_SetRegister(OTFDelay, 0x02, 1);
-	BQ769x2_SetRegister(OTFRecovery, 0x41, 1);
+	BQ769x2_SetRegister(OTFThreshold, 80, 1);
+	BQ769x2_SetRegister(OTFDelay, 2, 1);
+	BQ769x2_SetRegister(OTFRecovery, 65, 1);
 
-	BQ769x2_SetRegister(OTINTThreshold, 0x55, 1);
-	BQ769x2_SetRegister(OTINTDelay, 0x02, 1);
-	BQ769x2_SetRegister(OTINTRecovery, 0x50, 1);
+	BQ769x2_SetRegister(OTINTThreshold, 85, 1);
+	BQ769x2_SetRegister(OTINTDelay, 2, 1);
+	BQ769x2_SetRegister(OTINTRecovery, 80, 1);
 
-	BQ769x2_SetRegister(UTCThreshold, 0x00, 1);
-	BQ769x2_SetRegister(UTCDelay, 0x02, 1);
-	BQ769x2_SetRegister(UTCRecovery, 0x05, 1);
+	BQ769x2_SetRegister(UTCThreshold, 0, 1);
+	BQ769x2_SetRegister(UTCDelay, 2, 1);
+	BQ769x2_SetRegister(UTCRecovery, 5, 1);
 
-	BQ769x2_SetRegister(UTDThreshold, 0x00, 1);
-	BQ769x2_SetRegister(UTDDelay, 0x02, 1);
-	BQ769x2_SetRegister(UTDRecovery, 0x05, 1);
+	BQ769x2_SetRegister(UTDThreshold, 0, 1);
+	BQ769x2_SetRegister(UTDDelay, 2, 1);
+	BQ769x2_SetRegister(UTDRecovery, 5, 1);
 	
-	BQ769x2_SetRegister(UTINTThreshold, 0xFFEC, 2);
-	BQ769x2_SetRegister(UTINTDelay, 0x02, 1);
-	BQ769x2_SetRegister(UTINTRecovery, 0xFFF1, 2);
+	BQ769x2_SetRegister(UTINTThreshold, (uint8_t)-20, 1);
+	BQ769x2_SetRegister(UTINTDelay, 2, 1);
+	BQ769x2_SetRegister(UTINTRecovery, (uint8_t)-15, 1);
 	
-	BQ769x2_SetRegister(ProtectionsRecoveryTime, 0x03, 1);	
-	BQ769x2_SetRegister(HWDDelay, 0x3C, 1);
+	BQ769x2_SetRegister(ProtectionsRecoveryTime, 3, 1);	
+	BQ769x2_SetRegister(HWDDelay, 60, 2);
 
-	BQ769x2_SetRegister(LoadDetectActiveTime, 0x00, 1);
-	BQ769x2_SetRegister(LoadDetectRetryDelay, 0x32, 1);	
-	BQ769x2_SetRegister(LoadDetectTimeout, 0x01, 1);
+	BQ769x2_SetRegister(LoadDetectActiveTime, 0, 1);
+	BQ769x2_SetRegister(LoadDetectRetryDelay, 50, 1);	
+	BQ769x2_SetRegister(LoadDetectTimeout, 1, 2);
 
-	BQ769x2_SetRegister(PTOChargeThreshold, 0xFA, 1);
-	BQ769x2_SetRegister(PTODelay, 0x0708, 2);	
-	BQ769x2_SetRegister(PTOReset, 0x02, 1);	
+	BQ769x2_SetRegister(PTOChargeThreshold, 250, 2);
+	BQ769x2_SetRegister(PTODelay, 1800, 2);	
+	BQ769x2_SetRegister(PTOReset, 2, 2);	
 	
-	BQ769x2_SetRegister(CUDEPThreshold, 0x05DC, 2);
-	BQ769x2_SetRegister(CUDEPDelay, 0x02, 1);	
-	BQ769x2_SetRegister(SUVThreshold, 0x0898, 2);	
-	BQ769x2_SetRegister(SUVDelay, 0x05, 1);
-	BQ769x2_SetRegister(SOVThreshold, 0x1194, 2);	
-	BQ769x2_SetRegister(SOVDelay, 0x05, 1);		
-	BQ769x2_SetRegister(TOSSThreshold, 0x01F4, 2);
-	BQ769x2_SetRegister(TOSSDelay, 0x05, 1);	
-	BQ769x2_SetRegister(SOCCThreshold, 0x2710, 2);	
-	BQ769x2_SetRegister(SOCCDelay, 0x05, 1);
-	BQ769x2_SetRegister(SOCDThreshold, 0x8300, 2);	
-	BQ769x2_SetRegister(SOCDDelay, 0x05, 1);	
-	BQ769x2_SetRegister(SOTThreshold, 0x41, 1);
-	BQ769x2_SetRegister(SOTDelay, 0x05, 1);	
-	BQ769x2_SetRegister(SOTFThreshold, 0x55, 1);	
-	BQ769x2_SetRegister(SOTFDelay, 0x05, 1);		
-	BQ769x2_SetRegister(VIMRCheckVoltage, 0x0DAC, 2);
-	BQ769x2_SetRegister(VIMRMaxRelaxCurrent, 0x0A, 1);	
-	BQ769x2_SetRegister(VIMRThreshold, 0x01F4, 2);	
-	BQ769x2_SetRegister(VIMRDelay, 0x05, 1);
-	BQ769x2_SetRegister(VIMRRelaxMinDuration, 0x64, 1);	
-	BQ769x2_SetRegister(VIMACheckVoltage, 0x0E74, 2);	
-	BQ769x2_SetRegister(VIMAMinActiveCurrent, 0x32, 1);
-	BQ769x2_SetRegister(VIMAThreshold, 0xC8, 1);	
-	BQ769x2_SetRegister(VIMADelay, 0x05, 1);
-	BQ769x2_SetRegister(CFETFOFFThreshold, 0x14, 1);
-	BQ769x2_SetRegister(CFETFOFFDelay, 0x05, 1);	
-	BQ769x2_SetRegister(DFETFOFFThreshold, 0xFFEC, 2);	
-	BQ769x2_SetRegister(DFETFOFFDelay, 0x05, 1);
-	BQ769x2_SetRegister(VSSFFailThreshold, 0x64, 1);	
-	BQ769x2_SetRegister(VSSFDelay, 0x05, 1);	
-	BQ769x2_SetRegister(PF2LVLDelay, 0x05, 1);
-	BQ769x2_SetRegister(LFOFDelay, 0x05, 1);	
-	BQ769x2_SetRegister(HWMXDelay, 0x05, 1);
+	BQ769x2_SetRegister(CUDEPThreshold, 1500, 2);
+	BQ769x2_SetRegister(CUDEPDelay, 2, 1);	
+	BQ769x2_SetRegister(SUVThreshold, 2200, 2);	
+	BQ769x2_SetRegister(SUVDelay, 5, 1);
+	BQ769x2_SetRegister(SOVThreshold, 4500, 2);	
+	BQ769x2_SetRegister(SOVDelay, 5, 1);		
+	BQ769x2_SetRegister(TOSSThreshold, 500, 2);
+	BQ769x2_SetRegister(TOSSDelay, 5, 1);	
+	BQ769x2_SetRegister(SOCCThreshold, 10000, 2);	
+	BQ769x2_SetRegister(SOCCDelay, 5, 1);
+	BQ769x2_SetRegister(SOCDThreshold, (uint16_t)-32000, 2);	
+	BQ769x2_SetRegister(SOCDDelay, 5, 1);	
+	BQ769x2_SetRegister(SOTThreshold, 65, 1);
+	BQ769x2_SetRegister(SOTDelay, 5, 1);	
+	BQ769x2_SetRegister(SOTFThreshold, 85, 1);	
+	BQ769x2_SetRegister(SOTFDelay, 5, 1);		
+	BQ769x2_SetRegister(VIMRCheckVoltage, 3500, 2);
+	BQ769x2_SetRegister(VIMRMaxRelaxCurrent, 10, 2);	
+	BQ769x2_SetRegister(VIMRThreshold, 500, 2);	
+	BQ769x2_SetRegister(VIMRDelay, 5, 1);
+	BQ769x2_SetRegister(VIMRRelaxMinDuration, 100, 2);	
+	BQ769x2_SetRegister(VIMACheckVoltage, 3700, 2);	
+	BQ769x2_SetRegister(VIMAMinActiveCurrent, 50, 2);
+	BQ769x2_SetRegister(VIMAThreshold, 200, 2);	
+	BQ769x2_SetRegister(VIMADelay, 5, 1);
+	BQ769x2_SetRegister(CFETFOFFThreshold, 20, 2);
+	BQ769x2_SetRegister(CFETFOFFDelay, 5, 1);	
+	BQ769x2_SetRegister(DFETFOFFThreshold, (uint16_t)-20, 2);	
+	BQ769x2_SetRegister(DFETFOFFDelay, 5, 1);
+	BQ769x2_SetRegister(VSSFFailThreshold, 100, 2);	
+	BQ769x2_SetRegister(VSSFDelay, 5, 1);	
+	BQ769x2_SetRegister(PF2LVLDelay, 5, 1);
+	BQ769x2_SetRegister(LFOFDelay, 5, 1);	
+	BQ769x2_SetRegister(HWMXDelay, 5, 1);
 
 	BQ769x2_SetRegister(SecuritySettings, 0x00, 1);
 	BQ769x2_SetRegister(UnsealKeyStep1, 0x0414, 2);
@@ -1008,13 +1009,7 @@ int main(void)
 	delayUS(60000);
 	BQ769x2_Init();  // Configure all of the BQ769x2 register settings
 	delayUS(10000);
-	DirectCommands(AlarmStatus, 0xFFFF, W);
-	CommandSubcommands(PF_RESET);
-	delayUS(10000);
 	CommandSubcommands(FET_ENABLE); // Enable the CHG and DSG FETs
-	delayUS(10000);
-	manufacturing_status = BQ769x2_ReadManufacturingStatus();
-	BQ769x2_ReadFETStatus();
 	delayUS(10000);
 	CommandSubcommands(SLEEP_DISABLE); // Sleep mode is enabled by default. For this example, Sleep is disabled to 
 																		 // demonstrate full-speed measurements in Normal mode.
@@ -1040,7 +1035,7 @@ int main(void)
     /* USER CODE END WHILE */
 		BQ769x2_ReadAllVoltages();
 	  Pack_Current = (int16_t)BQ769x2_ReadCurrent();
-//	  BQ769x2_ReadFETStatus();
+	  BQ769x2_ReadFETStatus();
 	  statusread();
 	  BQ769x2_ReadSafetyStatus();
 	  BQ769x2_ReadPFStatus();
@@ -1052,7 +1047,7 @@ int main(void)
     alarm_status_reg  = BQ769x2_ReadAlarmStatusReg();
     alarm_raw_status  = BQ769x2_ReadAlarmRawStatus();
     alarm_enable_mask = BQ769x2_ReadAlarmEnable();
-//		manufacturing_status = BQ769x2_ReadManufacturingStatus();
+		manufacturing_status = BQ769x2_ReadManufacturingStatus();
 		
 	  Temperature[0] = BQ769x2_ReadTemperature(TS1Temperature);
 	  Temperature[1] = BQ769x2_ReadTemperature(TS2Temperature);
